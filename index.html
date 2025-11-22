@@ -43,7 +43,87 @@
                 <div class="text-3xl font-bold" id="totalAO">0</div>
             </div>
         </div>
+<!-- ==================== ANALOG SCALING CALCULATOR - PHIÊN BẢN SIÊU GỌN ==================== -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold mb-5 text-indigo-700 flex items-center gap-3">
+                <span>🧮 Analog Scaling Calculator</span>
+            </h2>
 
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Cột trái: Calculator -->
+                <div class="space-y-5">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700">Raw Min (Cảm biến)</label>
+                            <input type="number" id="rawMin" value="0" class="w-full px-4 py-2 border-2 rounded-lg focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700">Raw Max (Cảm biến)</label>
+                            <input type="number" id="rawMax" value="27648" class="w-full px-4 py-2 border-2 rounded-lg focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700">Giá trị thực Min (dải đo)</label>
+                            <input type="number" step="any" id="euMin" value="0" class="w-full px-4 py-2 border-2 rounded-lg focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-gray-700">Giá trị thực Max (dải đo)</label>
+                            <input type="number" step="any" id="euMax" value="100" class="w-full px-4 py-2 border-2 rounded-lg focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-1 text-gray-700">Đơn vị</label>
+                        <input type="text" id="calcUnit" value="°C" class="w-full px-4 py-2 border-2 rounded-lg focus:border-indigo-500" placeholder="bar, %, m³/h, rpm...">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6 mt-7 border-t pt-6">
+                        <div>
+                            <label class="block font-semibold mb-2 text-blue-600 text-lg">Raw (Cảm biến) → Giá trị thực (dải đo)</label>
+                            <input type="number" id="inputRaw" placeholder="13824" class="w-full px-4 py-2 border-2 border-blue-300 rounded-lg font-mono text-lg">
+                            <div class="mt-3 text-right text-2xl font-bold text-blue-600" id="resultEU">-</div>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-2 text-green-600 text-lg">Giá trị thực (dải đo)→ Raw (Cảm biến)</label>
+                            <input type="number" step="any" id="inputEU" placeholder="75.5" class="w-full px-4 py-2 border-2 border-green-300 rounded-lg font-mono text-lg">
+                            <div class="mt-3 text-right text-2xl font-bold text-green-600" id="resultRaw">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cột phải: Preset + Bảng nhanh -->
+                <div>
+                    <h3 class="font-bold text-lg mb-3">Preset cảm biến phổ biến (1 click)</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-5">
+                        <button onclick="setPreset(0,27648,0,10,'bar')" class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:shadow-md border text-left font-medium">0-10 bar</button>
+                        <button onclick="setPreset(0,27648,0,16,'bar')" class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg hover:shadow-md border text-left font-medium">0-16 bar</button>
+                        <button onclick="setPreset(6241,31208,-50,200,'°C')" class="p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg hover:shadow-md border text-left font-medium">PT100 -50→200°C</button>
+                        <button onclick="setPreset(0,27648,0,100,'m³/h')" class="p-3 bg-gradient-to-r from-cyan-50 to-cyan-100 rounded-lg hover:shadow-md border text-left font-medium">0-100 m³/h</button>
+                        <button onclick="setPreset(0,27648,0,5,'m H₂O')" class="p-3 bg-gradient-to-r from-teal-50 to-teal-100 rounded-lg hover:shadow-md border text-left font-medium">Mức nước 0-5m</button>
+                        <button onclick="setPreset(6241,31208,0,500,'°C')" class="p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg hover:shadow-md border text-left font-medium">Nhiệt độ cao 0-500°C</button>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 font-mono text-sm border">
+                        <table class="w-full">
+                            <thead><tr class="border-b"><th class="text-left py-2">%</th><th class="text-left py-2">Raw</th><th class="text-left py-2">Giá trị thực</th></tr></thead>
+                            <tbody id="quickTable" class="text-gray-700">
+                                <tr><td class="py-1">0%</td>   <td id="v0">-</td>   <td id="eu0">-</td></tr>
+                                <tr><td class="py-1">25%</td>  <td id="v25">-</td>  <td id="eu25">-</td></tr>
+                                <tr><td class="py-1">50%</td>  <td id="v50">-</td>  <td id="eu50">-</td></tr>
+                                <tr><td class="py-1">75%</td>  <td id="v75">-</td>  <td id="eu75">-</td></tr>
+                                <tr><td class="py-1">100%</td> <td id="v100">-</td> <td id="eu100">-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>  <!-- đóng phần Analog Calculator -->
+    </div>      <!-- <<< THÊM DÒNG NÀY: đóng div max-w-7xl mx-auto của phần trên -->
+
+    <!-- Phần PLC I/O chính thức bắt đầu lại từ đây, tách biệt hoàn toàn -->
+    <div class="max-w-7xl mx-auto mt-12">   <!-- <<< THAY DÒNG NÀY: mở lại container mới + mt-12 để có khoảng cách đẹp -->
         <div class="grid grid-cols-3 gap-6">
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
@@ -503,8 +583,63 @@
         document.getElementById('plcBrand').value = data.brand;
         renderTemplates();
         renderDevices();
+        // ===================== ANALOG SCALING CALCULATOR - PHIÊN BẢN GỌN NHẤT =====================
+        function calculateAll() {
+            const rawMin = parseFloat(document.getElementById('rawMin').value) || 0;
+            const rawMax = parseFloat(document.getElementById('rawMax').value) || 27648;
+            const euMin  = parseFloat(document.getElementById('euMin').value) || 0;
+            const euMax  = parseFloat(document.getElementById('euMax').value) || 100;
+            const unit   = document.getElementById('calcUnit').value || '';
+
+            const inputRaw = parseFloat(document.getElementById('inputRaw').value);
+            const inputEU  = parseFloat(document.getElementById('inputEU').value);
+
+            // Raw → EU
+            if (!isNaN(inputRaw)) {
+                let eu = euMin + (inputRaw - rawMin) * (euMax - euMin) / (rawMax - rawMin);
+                eu = Math.max(euMin, Math.min(euMax, eu)); // clamp
+                document.getElementById('resultEU').textContent = eu.toFixed(3) + ' ' + unit;
+            } else {
+                document.getElementById('resultEU').textContent = '-';
+            }
+
+            // EU → Raw
+            if (!isNaN(inputEU)) {
+                let raw = rawMin + (inputEU - euMin) * (rawMax - rawMin) / (euMax - euMin);
+                raw = Math.max(rawMin, Math.min(rawMax, Math.round(raw))); // clamp + round
+                document.getElementById('resultRaw').textContent = raw;
+            } else {
+                document.getElementById('resultRaw').textContent = '-';
+            }
+
+            // Bảng nhanh 0-25-50-75-100%
+            const percent = [0,25,50,75,100];
+            percent.forEach(p => {
+                const raw = rawMin + (rawMax - rawMin) * p / 100;
+                const eu  = euMin  + (euMax  - euMin)  * p / 100;
+                document.getElementById('v'+p).textContent = Math.round(raw);
+                document.getElementById('eu'+p).textContent = eu.toFixed(2) + ' ' + unit;
+            });
+        }
+
+        function setPreset(minRaw, maxRaw, minEU, maxEU, unit) {
+            document.getElementById('rawMin').value = minRaw;
+            document.getElementById('rawMax').value = maxRaw;
+            document.getElementById('euMin').value = minEU;
+            document.getElementById('euMax').value = maxEU;
+            document.getElementById('calcUnit').value = unit;
+            calculateAll();
+        }
+
+        // Events
+        ['rawMin','rawMax','euMin','euMax','calcUnit','inputRaw','inputEU'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculateAll);
+        });
+
+        // Khởi động
+        calculateAll();
     </script>
 </body>
 </html>
-
 
