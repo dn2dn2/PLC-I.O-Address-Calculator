@@ -598,19 +598,19 @@
             if (!isNaN(inputRaw)) {
                 let eu = euMin + (inputRaw - rawMin) * (euMax - euMin) / (rawMax - rawMin);
                 eu = Math.max(euMin, Math.min(euMax, eu)); // clamp
-                document.getElementById('resultEU').textContent = eu.toFixed(3) + ' ' + unit;
+                document.getElementById('resultEU').textContent = eu.toFixed(2) + ' ' + unit;
             } else {
                 document.getElementById('resultEU').textContent = '-';
             }
 
             // EU → Raw
-            if (!isNaN(inputEU)) {
-                let raw = rawMin + (inputEU - euMin) * (rawMax - rawMin) / (euMax - euMin);
-                raw = Math.max(rawMin, Math.min(rawMax, Math.round(raw))); // clamp + round
-                document.getElementById('resultRaw').textContent = raw;
-            } else {
-                document.getElementById('resultRaw').textContent = '-';
-            }
+			if (!isNaN(inputEU)) {
+				let raw = rawMin + (inputEU - euMin) * (rawMax - rawMin) / (euMax - euMin);
+				raw = Math.max(rawMin, Math.min(rawMax, raw)); // chỉ clamp, không round
+				document.getElementById('resultRaw').textContent = raw.toFixed(2); // hiển thị 3 chữ số thập phân
+			} else {
+				document.getElementById('resultRaw').textContent = '-';
+			}
 
             // Bảng nhanh 0-25-50-75-100%
             const percent = [0,25,50,75,100];
@@ -642,6 +642,5 @@
     </script>
 </body>
 </html>
-
 
 
